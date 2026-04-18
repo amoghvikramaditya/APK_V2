@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — APK</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235D7450'/%3E%3Ctext x='16' y='22' font-size='16' font-weight='700' text-anchor='middle' fill='%23fff' font-family='system-ui'%3EA%3C/text%3E%3C/svg%3E">
+</head>
+<body class="dashboard-page">
+    <!-- Cursor glow element -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <!-- Theme transition overlay -->
+    <div class="theme-transition-overlay" id="themeOverlay"></div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <span class="mobile-header-brand">APK</span>
+        <div style="display:flex;gap:8px;">
+            <button class="btn-icon" onclick="toggleSidebar()" aria-label="Menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Sidebar — Widget Panel -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-title">APK</div>
+            <div class="sidebar-role" id="sidebarRole">Student Dashboard</div>
+        </div>
+        <div class="sidebar-widgets" id="sidebarWidgets">
+            <div class="widget">
+                <div class="widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Clock</div>
+                <div class="clock-display" id="clockDisplay">--:--</div>
+                <div class="clock-date" id="clockDate">---</div>
+            </div>
+            <div class="widget">
+                <div class="widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Calendar</div>
+                <div class="mini-cal-header">
+                    <span class="mini-cal-month" id="calMonth"></span>
+                    <div class="mini-cal-nav">
+                        <button onclick="changeMonth(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+                        <button onclick="changeMonth(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+                    </div>
+                </div>
+                <div class="mini-cal-grid" id="calGrid"></div>
+            </div>
+            <div class="widget">
+                <div class="widget-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Upcoming</div>
+                <div class="deadline-list" id="deadlineList"><div class="deadline-empty">No upcoming deadlines</div></div>
+            </div>
+        </div>
+        <div class="sidebar-bottom">
+            <button class="sidebar-link" onclick="doThemeToggle(event)" id="themeToggle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <span id="themeLabel">Dark Mode</span>
+            </button>
+            <button class="sidebar-link" onclick="logout()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent"></main>
+    <!-- User Info Tile (glassmorphic) -->
+    <div class="user-info-tile" id="userInfoTile"></div>
+
+    <!-- Student Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Submit Assignment</h3><button class="btn-icon" onclick="closeUploadModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <p style="font-size:14px;color:var(--muted-fg);margin-bottom:12px;">Submitting for: <strong id="uploadAssignmentName" style="color:var(--fg)"></strong></p>
+                <div id="uploadPasswordGroup" class="form-group" style="display:none;margin-bottom:12px;">
+                    <label class="form-label">Assignment Password</label>
+                    <input type="password" id="uploadAssignmentPassword" class="form-input" placeholder="Enter assignment password">
+                </div>
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="fileInput">
+                    <div id="uploadZoneContent"><div class="upload-zone-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><p class="upload-zone-text">Drop file here or <b>browse</b></p><p class="upload-zone-hint">Maximum 50MB</p></div>
+                    <div id="filePreviewContainer" style="display:none;"></div>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeUploadModal()">Cancel</button><button class="btn btn-primary btn-sm" id="uploadButton" onclick="uploadSubmission()" disabled>Upload</button></div>
+        </div>
+    </div>
+
+    <!-- Teacher Upload Assignment Modal -->
+    <div class="modal-overlay" id="teacherUploadModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Upload Assignment</h3><button class="btn-icon" onclick="closeTeacherUploadModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <p style="font-size:14px;color:var(--muted-fg);margin-bottom:12px;">Class: <strong id="teacherUploadClass" style="color:var(--fg)"></strong></p>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">Deadline (optional)</label>
+                    <input type="datetime-local" id="teacherDeadline" class="form-input">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">Assignment Password (optional)</label>
+                    <input type="text" id="teacherAssignmentPassword" class="form-input" placeholder="Leave blank for no password">
+                </div>
+                <div class="upload-zone" id="teacherUploadZone">
+                    <input type="file" id="teacherFileInput">
+                    <div id="teacherUploadZoneContent"><div class="upload-zone-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><p class="upload-zone-text">Drop file here or <b>browse</b></p><p class="upload-zone-hint">Maximum 50MB</p></div>
+                    <div id="teacherFilePreview" style="display:none;"></div>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeTeacherUploadModal()">Cancel</button><button class="btn btn-primary btn-sm" id="teacherUploadButton" onclick="uploadTeacherAssignment()" disabled>Upload</button></div>
+        </div>
+    </div>
+
+    <!-- Join/Create Class Modal -->
+    <div class="modal-overlay" id="joinClassModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title" id="classModalTitle">Join Class</h3><button class="btn-icon" onclick="closeClassModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label" for="classCodeInput">Course Code</label>
+                    <input type="text" id="classCodeInput" class="form-input" placeholder="e.g. CS101">
+                </div>
+                <div class="form-group" id="classPasswordGroup" style="margin-bottom:0;">
+                    <label class="form-label" for="classPasswordInput">Password <span style="color:var(--muted-fg);font-weight:400">(optional)</span></label>
+                    <input type="text" id="classPasswordInput" class="form-input" placeholder="Leave blank for no password">
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeClassModal()">Cancel</button><button class="btn btn-primary btn-sm" id="classActionBtn" onclick="submitClassAction()">Join</button></div>
+        </div>
+    </div>
+
+    <!-- Class Settings Modal (teacher — view/change password) -->
+    <div class="modal-overlay" id="classSettingsModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Class Settings</h3><button class="btn-icon" onclick="closeClassSettingsModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <p style="font-size:14px;color:var(--muted-fg);margin-bottom:12px;">Class: <strong id="settingsClassName" style="color:var(--fg)"></strong></p>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Join Password</label>
+                    <input type="text" id="settingsPassword" class="form-input" placeholder="No password set">
+                    <p style="font-size:12px;color:var(--muted-fg);margin-top:4px;">Students must enter this password to join. Leave blank to remove.</p>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeClassSettingsModal()">Cancel</button><button class="btn btn-primary btn-sm" id="saveSettingsBtn" onclick="saveClassSettings()">Save</button></div>
+        </div>
+    </div>
+
+    <!-- Edit Deadline Modal -->
+    <div class="modal-overlay" id="deadlineModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Set Deadline</h3><button class="btn-icon" onclick="closeDeadlineModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <p style="font-size:14px;color:var(--muted-fg);margin-bottom:12px;">Assignment: <strong id="deadlineAssignmentName" style="color:var(--fg)"></strong></p>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Deadline</label>
+                    <input type="datetime-local" id="deadlineInput" class="form-input">
+                    <p style="font-size:12px;color:var(--muted-fg);margin-top:4px;">Leave blank to remove deadline.</p>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeDeadlineModal()">Cancel</button><button class="btn btn-primary btn-sm" onclick="saveDeadline()">Save</button></div>
+        </div>
+    </div>
+
+    <!-- Edit Assignment Password Modal -->
+    <div class="modal-overlay" id="assignmentPwModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Assignment Password</h3><button class="btn-icon" onclick="closeAssignmentPwModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <p style="font-size:14px;color:var(--muted-fg);margin-bottom:12px;">Assignment: <strong id="assignmentPwName" style="color:var(--fg)"></strong></p>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Password</label>
+                    <input type="text" id="assignmentPwInput" class="form-input" placeholder="Leave blank to remove">
+                    <p style="font-size:12px;color:var(--muted-fg);margin-top:4px;">Students need this password to download the file and submit.</p>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeAssignmentPwModal()">Cancel</button><button class="btn btn-primary btn-sm" onclick="saveAssignmentPassword()">Save</button></div>
+        </div>
+    </div>
+
+    <!-- Password Prompt Modal (for students) -->
+    <div class="modal-overlay" id="passwordPromptModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Password Required</h3><button class="btn-icon" onclick="closePasswordPrompt()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body">
+                <p style="font-size:14px;color:var(--muted-fg);margin-bottom:12px;">This assignment requires a password.</p>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="passwordPromptInput" class="form-input" placeholder="Enter password">
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closePasswordPrompt()">Cancel</button><button class="btn btn-primary btn-sm" id="passwordPromptBtn" onclick="submitPasswordPrompt()">Continue</button></div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Delete File</h3><button class="btn-icon" onclick="closeConfirmModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+            <div class="modal-body confirm-body"><p id="confirmMsg">Are you sure?</p><p class="sub">This cannot be undone.</p></div>
+            <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="closeConfirmModal()">Cancel</button><button class="btn btn-danger btn-sm" onclick="confirmAction()">Delete</button></div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
