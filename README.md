@@ -14,6 +14,27 @@
 
 **Vision Statement:** To provide an ultra-secure and visually exceptional platform for managing digital classrooms, where sharing and submitting assignments is friction-less and protected.
 
+## 🛠️ Software Design
+
+The **APK Portal** is built using a clean, modular architecture that prioritizes security, maintainability, and user experience. Detailed design documentation can be found in the [`/docs/design/`](./docs/design/) folder.
+
+### Core Design Principles
+- **Abstraction**: Use of a dedicated `DataService` to encapsulate all database interactions.
+- **Modularity**: Clearly defined `backend` and `frontend` separation.
+- **High Cohesion**: Specific modules for Auth, File Handling, and Classroom Management.
+- **Low Coupling**: Communication via a stateless RESTful JSON API.
+
+### Architecture
+We utilize a **Layered Client-Server Architecture**:
+1. **Frontend**: Single-page application logic using Vanilla JS and CSS3.
+2. **Backend**: Node.js/Express server handling logic and authentication.
+3. **Storage**: SQLite for relational data and local file system for uploads.
+
+> [!TIP]
+> View the [Architecture Diagram](./docs/design/architecture.md) and [Design Principles](./docs/design/design_principles.md) for deeper technical insights.
+
+## 📈 Project Management
+
 **Key Features & Project Goals:**
 - **Granular Access Control:** Implementation of class-specific and assignment-level password encryption, empowering educators to securely stagger the release of examination materials.
 - **Academic Integrity Monitoring:** Specialized IP monitoring systems configured to track concurrent assignment submissions from identical network addresses, dynamically flagging potential collusion.
