@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schema.stryker-mutator.io/stryker-config.schema.json",
+  "packageManager": "npm",
+  "reporters": ["html", "clear-text", "progress"],
+  "testRunner": "mocha",
+  "mochaOptions": {
+    "spec": ["tests/**/*.test.js"]
+  },
+  "mutate": ["backend/dataService.js"],
+  "thresholds": { "high": 80, "low": 60, "break": 0 }
+}

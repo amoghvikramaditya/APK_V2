@@ -491,20 +491,24 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Data: ${dataDir}`);
-    console.log(`Uploads: ${uploadDir}`);
-    console.log(`\n  Local:   http://localhost:${PORT}`);
-    // Show LAN URL
-    const os = require('os');
-    const nets = os.networkInterfaces();
-    for (const name of Object.keys(nets)) {
-        for (const net of nets[name]) {
-            if (net.family === 'IPv4' && !net.internal) {
-                console.log(`  LAN:     http://${net.address}:${PORT}  ← Share this with others on the same network`);
+if (require.main === module) {
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server is running on port ${PORT}`);
+        console.log(`Data: ${dataDir}`);
+        console.log(`Uploads: ${uploadDir}`);
+        console.log(`\n  Local:   http://localhost:${PORT}`);
+        // Show LAN URL
+        const os = require('os');
+        const nets = os.networkInterfaces();
+        for (const name of Object.keys(nets)) {
+            for (const net of nets[name]) {
+                if (net.family === 'IPv4' && !net.internal) {
+                    console.log(`  LAN:     http://${net.address}:${PORT}  ← Share this with others on the same network`);
+                }
             }
         }
-    }
-    console.log('');
-});
+        console.log('');
+    });
+}
+
+module.exports = app;

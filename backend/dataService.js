@@ -4,12 +4,13 @@ const path = require('path');
 const fs = require('fs');
 
 class DataService {
-    constructor() {
+    constructor(dbPath = null) {
         const dataDir = path.join(__dirname, 'data');
         if (!fs.existsSync(dataDir)) {
             fs.mkdirSync(dataDir, { recursive: true });
         }
-        this.db = new Database(path.join(dataDir, 'apk.db'));
+        const finalPath = dbPath || path.join(dataDir, 'apk.db');
+        this.db = new Database(finalPath);
         this.db.pragma('journal_mode = DELETE');
         this.initTables();
     }
@@ -393,3 +394,4 @@ class DataService {
 }
 
 module.exports = new DataService();
+module.exports.DataService = DataService;
