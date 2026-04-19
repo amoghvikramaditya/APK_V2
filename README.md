@@ -80,7 +80,7 @@ APK_PORTAL/
  ┃ ┣ dataService.js    # Database I/O Handlers
  ┃ ┗ server.js         # Express API Router
  ┣ frontend/
- ┃ ┣ dashboard.html    # React-like dynamic view
+ ┃ ┣ dashboard.html    # Main Student/Teacher Dashboard
  ┃ ┣ index.html        # Auth Portal
  ┃ ┣ script.js         # Client-side Logic Controller
  ┃ ┗ styles.css        # UI Token System

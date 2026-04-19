@@ -10,7 +10,7 @@ class DataService {
             fs.mkdirSync(dataDir, { recursive: true });
         }
         this.db = new Database(path.join(dataDir, 'apk.db'));
-        this.db.pragma('journal_mode = WAL');
+        this.db.pragma('journal_mode = DELETE');
         this.initTables();
     }
 
